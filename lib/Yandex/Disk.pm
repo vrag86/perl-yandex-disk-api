@@ -19,6 +19,7 @@ use Data::Printer;
 our $VERSION    = "0.01";
 
 my $WAIT_RETRY  = 20;
+my $BUFF_SIZE = 8192;
 
 sub new {
     my $class       = shift;
@@ -94,8 +95,10 @@ sub createFolder {
     my $recursive   = $opt{-recursive};
 
     if ($recursive) {
+        my @half_path;
         for my $l_path (split /\//, $path) {
-            $self->createFolder( -path => $l_path );
+            push @half_path, $l_path;
+            $self->createFolder( -path => join('/', @half_path) );
         }
     }
 
@@ -128,6 +131,10 @@ sub deleteResource {
     my $res = $self->__request('https://cloud-api.yandex.net/v1/disk/resources?path=' . uri_escape($path), "DELETE");
     my $code = $res->code;
     if ($code eq '204') {
+        #Free folder
+        return 1;
+    }
+    elsif ($code eq '202') {
         if ($wait) {
             my $href = __fromJson($res->decoded_content)->{href};
             $self->__waitResponse($href, $WAIT_RETRY) or croak "Timeout to wait response. Try increase $WAIT_RETRY variable";
@@ -137,6 +144,37 @@ sub deleteResource {
     else {
         croak "Cant delete $path. Error: " . $res->status_line;
     }
+}
+
+sub downloadFile {
+    my $self = shift;
+    my %opt = @_;
+    my $path = $opt{-path} || croak "Specify -path param";
+    my $file = $opt{-file} || croak "Specify -file param";
+
+    my $res = $self->__request('https://cloud-api.yandex.net/v1/disk/resources/download?path=' . uri_escape($path), "GET");
+    my $code = $res->code;
+    if ($code ne '200') {
+        croak "Error on request file $path: " . $res->status_line;
+    }
+    my $download_url = __fromJson($res->decoded_content)->{href};
+
+    $self->__download($download_url, $file);
+    return 1;
+}
+
+sub __download {
+    my ($self, $url, $fname) = @_;
+    my $ua = $self->{ua};
+
+    open my $FL, ">$fname" or croak "Cant open $fname to write $!";
+    binmode $FL;
+    my $res = $ua->get($url, ':read_size_hint' => $BUFF_SIZE, ':content_cb' => sub {print $FL $_[0];});
+    close $FL;
+    if ($res->code eq '200') {
+        return 1;
+    }
+    croak "Cant download file $url to $fname. Error: " . $res->status_line;
 }
 
 sub __waitResponse {
@@ -159,7 +197,6 @@ sub __waitResponse {
 sub __upload_file {
     #Buffered chunked upload file
     my ($url, $file) = @_;
-    my $buff_size = 8192;
 
     my $u1 = URI->new($url);
 
@@ -186,7 +223,7 @@ sub __upload_file {
     open my $FH, "<$file" or croak "Cant open $file $!";
     binmode $FH;
     my $filebuf;
-    while (my $bytes = read($FH, $filebuf, $buff_size)) {
+    while (my $bytes = read($FH, $filebuf, $BUFF_SIZE)) {
         my $hex = sprintf("%X", $bytes);
         $sock->print($hex) or croak "Cant print to socket";
         $sock->print("\r\n") or croak "Cant print to socket";
@@ -301,6 +338,15 @@ Delete file or folder from disk. Return 1 if success
         -path               => Path to delete file or folder
         -permanently        => Do not move to trash, delete permanently (default: 0)
         -wait               => Wait delete resource (defailt: 0)
+
+=head2 downloadFile(%opt)
+
+Download file from Yandex Disk to local file. Method overwrites local file if exists. Return 1 if success
+    $disk->downloadFile(-path => 'Temp/test', -file => 'test');
+    Options:
+        -path               => Path to file on Yandex Disk
+        -file               => Path to local destination
+
 
 
 
