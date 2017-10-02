@@ -4,6 +4,7 @@ use 5.008001;
 use strict;
 use warnings;
 use utf8;
+use Yandex::Disk::Public;
 use Carp qw/croak carp/;
 use LWP::UserAgent;
 use JSON::XS;
@@ -16,7 +17,7 @@ use IO::Socket::SSL;
 ###### DELETE #######
 use Data::Printer;
 
-our $VERSION    = "0.01";
+our $VERSION    = '0.01';
 
 my $WAIT_RETRY  = 20;
 my $BUFF_SIZE = 8192;
@@ -32,7 +33,8 @@ sub new {
     $ua->default_header('Content-Type'  => 'application/json');
     $ua->default_header('Connection'    => 'keep-alive');
     $ua->default_header('Authorization' => 'OAuth ' . $self->{token});
-    $self->{ua} = $ua;
+    $self->{ua}     = $ua;
+    $self->{public_info} = {};
     return bless $self, $class;
 }
 
@@ -163,6 +165,11 @@ sub downloadFile {
     return 1;
 }
 
+sub public {
+    my $self = shift;
+    return Yandex::Disk::Public->new( -token => $self->{token} );
+}
+
 sub __download {
     my ($self, $url, $fname) = @_;
     my $ua = $self->{ua};
@@ -257,7 +264,7 @@ sub __request {
 }
 
 sub __fromJson {
-    my $string = shift;
+    my $string = ref($_[0]) ? $_[1] : $_[0];
     my $res = JSON::XS::decode_json($string);
     return $res;
 }

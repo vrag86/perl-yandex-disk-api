@@ -46,6 +46,7 @@ testUploadFile();
 testDownloadFile();
 testCompareFile();
 testDeleteResource();
+testPublic();
 
 
 sub testDiskInfo {
@@ -89,8 +90,13 @@ sub testCreateFolder {
 
 sub testDeleteResource {
     can_ok("Yandex::Disk", "deleteResource");
-    my $res = $disk->deleteResource( -path  => '/Temp' ) ;
+    my $res = $disk->deleteResource( -path  => '/Temp/test' ) ;
     ok($res, "Test deleteResource");
+}
+
+sub testPublic {
+    my $public = $disk->public();
+    isa_ok($public, "Yandex::Disk::Public", "Test get Yandex::Disk::Public object");
 }
 
 sub get_md5 {
