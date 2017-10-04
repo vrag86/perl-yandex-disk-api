@@ -43,6 +43,7 @@ isa_ok($disk, "Yandex::Disk");
 testDiskInfo();
 testCreateFolder();
 testUploadFile();
+testListFiles();
 testDownloadFile();
 testCompareFile();
 testDeleteResource();
@@ -104,7 +105,13 @@ sub testEmptyTrash {
     can_ok("Yandex::Disk", "emptyTrash");
     my $res = $disk->emptyTrash();
     ok ($res, "Test empty trash");
+}
 
+sub testListFiles {
+    can_ok("Yandex::Disk", "listFiles");
+    my $list = $disk->listFiles(-path =>'/Temp');
+    my $found_file = grep {$_->{name} eq 'small_file'} @$list;
+    ok ($found_file, "Test listFiles");
 }
 
 sub get_md5 {
@@ -116,5 +123,4 @@ sub get_md5 {
     }
     close $FL;
     return $md5->b64digest;
-
 }

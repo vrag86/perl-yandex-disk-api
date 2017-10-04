@@ -189,6 +189,25 @@ sub emptyTrash {
     }
 }
 
+sub listFiles {
+    my $self = shift;
+    my %opt = @_;
+    my $path = $opt{-path} || croak "Specify -path param";
+    my $limit = $opt{-limit} || 999999;
+    my $offset = $opt{-offset};
+    $offset = 0 if not $offset;
+
+    my $param = '?path=' . uri_escape($path) . "&limit=$limit&offset=$offset&fields=_embedded.items";
+    my $res = $self->__request('https://cloud-api.yandex.net/v1/disk/resources' . $param, 'GET');
+    my $code = $res->code;
+    if ($code ne '200') {
+        croak "Error on listFiles. Error: " . $res->status_line;
+    }
+    my $json_res = __fromJson($res->decoded_content);
+
+    return $json_res->{_embedded}->{items};
+}
+
 sub public {
     my $self = shift;
     return Yandex::Disk::Public->new( -token => $self->{token} );
@@ -380,7 +399,7 @@ Download file from Yandex Disk to local file. Method overwrites local file if ex
 
 =head2 emptyTrash(%opt)
 
-Empty trash. If -path specified, delete -path resource, otherwise - empty all trash
+Empty trash. If -path specified, delete -path resource, otherwise - empty all trash. Return 1 if success
     $disk->emptyTrash(-path => 'Temp/test');        #Delete '/Temp/test' from trash
     Options:
         -path               => Path to resource on Yandex Disk to delete from trash
@@ -388,6 +407,16 @@ Empty trash. If -path specified, delete -path resource, otherwise - empty all tr
 
 
     $disk->emptyTrash;      #Full empty trash
+
+=head2 listFiles(%opt)
+
+List files in folder. Return arrayref to hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime_type", "size")
+    $disk->listFiles(-path => 'Temp/test');
+    Options:
+        -path               => Path to resource (file or folder) on Yandex Disk for which need get info
+        -limit              => Limit max files to output (default: unlimited)
+        -offset             => Offset records from start (default: 0)
+
 
 =head1 Public files
 
