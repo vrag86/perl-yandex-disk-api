@@ -47,6 +47,7 @@ testDownloadFile();
 testCompareFile();
 testDeleteResource();
 testPublic();
+testEmptyTrash();
 
 
 sub testDiskInfo {
@@ -97,6 +98,13 @@ sub testDeleteResource {
 sub testPublic {
     my $public = $disk->public();
     isa_ok($public, "Yandex::Disk::Public", "Test get Yandex::Disk::Public object");
+}
+
+sub testEmptyTrash {
+    can_ok("Yandex::Disk", "emptyTrash");
+    my $res = $disk->emptyTrash();
+    ok ($res, "Test empty trash");
+
 }
 
 sub get_md5 {

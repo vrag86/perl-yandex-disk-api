@@ -10,7 +10,6 @@ use LWP::UserAgent;
 use JSON::XS;
 use File::Basename;
 use URI::Escape;
-use URI;
 use Encode;
 use IO::Socket::SSL;
 
@@ -163,6 +162,31 @@ sub downloadFile {
 
     $self->__download($download_url, $file);
     return 1;
+}
+
+sub emptyTrash {
+    my $self = shift;
+    my %opt = @_;
+    my $path = $opt{-path} || '';
+    my $wait = $opt{-wait};
+
+    my $param = $path ? '?path=' . uri_escape($path) : '';
+    my $res = $self->__request('https://cloud-api.yandex.net/v1/disk/trash/resources/' . $path, 'DELETE');
+    my $code = $res->code;
+    if ($code eq '204') {
+        return 1;
+    }
+    elsif ($code eq '202') {
+        if ($wait) {
+            my $href = __fromJson($res->decoded_content)->{href};
+            $self->__waitResponse($href, $WAIT_RETRY) or croak "Timeout to wait response. Try increase $WAIT_RETRY variable";
+        }
+        return 1;
+    }
+    else {
+        $path = "by path $path" if $path;
+        croak "Cant empty trash$path. Error: " . $res->status_line;
+    }
 }
 
 sub public {
@@ -354,7 +378,40 @@ Download file from Yandex Disk to local file. Method overwrites local file if ex
         -path               => Path to file on Yandex Disk
         -file               => Path to local destination
 
+=head2 emptyTrash(%opt)
+
+Empty trash. If -path specified, delete -path resource, otherwise - empty all trash
+    $disk->emptyTrash(-path => 'Temp/test');        #Delete '/Temp/test' from trash
+    Options:
+        -path               => Path to resource on Yandex Disk to delete from trash
+        -wait               => Wait empty trash (defailt: 0)
 
 
+    $disk->emptyTrash;      #Full empty trash
+
+=head1 Public files
+
+my $public = $disk->public();  #Create L<Yandex::Disk::Public> object
+
+=head1 DEPENDENCE
+
+L<LWP::UserAgent|JSON::XS|URI::Escape|IO::Socket::SSL>
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Pavel Andryushin <vrag867@gmail.com>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2017 by Pavel Andryushin.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
