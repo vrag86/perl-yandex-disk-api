@@ -416,6 +416,7 @@ Empty trash. If -path specified, delete -path resource, otherwise - empty all tr
 =head2 listFiles(%opt)
 
 List files in folder. Return arrayref to hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime_type", "size")
+
     $disk->listFiles(-path => 'Temp/test');
     Options:
         -path               => Path to resource (file or folder) on Yandex Disk for which need get info
