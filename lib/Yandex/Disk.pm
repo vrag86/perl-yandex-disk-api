@@ -336,6 +336,7 @@ B<Yandex::Disk> - a simple API for Yandex Disk
 =head2 getDiskInfo()
 
 Return disk info data as hashref
+
     $disk->getDiskInfo();
 Example output:
     {
@@ -366,6 +367,7 @@ Example output:
 =head2 uploadFile(%opt)
 
 Upload file (-file) to Yandex Disk in folder (-remote_path). Return 1 if success
+
     $disk->uploadFile(-file => '/root/upload', -remote_path => 'Temp', -overwrite => 0);
     Options:
         -overwrite          => Owervrite file if exists (default: 1)
@@ -375,6 +377,7 @@ Upload file (-file) to Yandex Disk in folder (-remote_path). Return 1 if success
 =head2 createFolder(%opt)
     
 Create folder on disk
+
     $disk->createFolder(-path => 'Temp/test', -recursive => 1);
     Options:
         -path               => Path to folder,
@@ -383,6 +386,7 @@ Create folder on disk
 =head2 deleteResource(%opt)
 
 Delete file or folder from disk. Return 1 if success
+
     $disk->deleteResource(-path => 'Temp/test');
     Options:
         -path               => Path to delete file or folder
@@ -392,6 +396,7 @@ Delete file or folder from disk. Return 1 if success
 =head2 downloadFile(%opt)
 
 Download file from Yandex Disk to local file. Method overwrites local file if exists. Return 1 if success
+
     $disk->downloadFile(-path => 'Temp/test', -file => 'test');
     Options:
         -path               => Path to file on Yandex Disk
@@ -400,11 +405,11 @@ Download file from Yandex Disk to local file. Method overwrites local file if ex
 =head2 emptyTrash(%opt)
 
 Empty trash. If -path specified, delete -path resource, otherwise - empty all trash. Return 1 if success
+    
     $disk->emptyTrash(-path => 'Temp/test');        #Delete '/Temp/test' from trash
     Options:
         -path               => Path to resource on Yandex Disk to delete from trash
         -wait               => Wait empty trash (defailt: 0)
-
 
     $disk->emptyTrash;      #Full empty trash
 
@@ -424,7 +429,7 @@ my $public = $disk->public();  #Create L<Yandex::Disk::Public> object
 
 =head1 DEPENDENCE
 
-L<LWP::UserAgent|JSON::XS|URI::Escape|IO::Socket::SSL>
+L<LWP::UserAgent>, L<JSON::XS>, L<URI::Escape>, L<IO::Socket::SSL>
 
 =head1 AUTHORS
 

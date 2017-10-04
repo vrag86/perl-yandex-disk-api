@@ -10,12 +10,13 @@
 ## getDiskInfo()
 
 Return disk info data as hashref
+
     $disk->getDiskInfo();
 Example output:
     {
-        max\_file\_size    1073741824,
+        max_file_size    1073741824,
         revision         14987326771107,
-        system\_folders   {
+        system_folders   {
             applications    "disk:/Приложения",
             downloads       "disk:/Загрузки/",
             facebook        "disk:/Социальные сети/Facebook",
@@ -28,9 +29,9 @@ Example output:
             social          "disk:/Социальные сети/",
             vkontakte       "disk:/Социальные сети/ВКонтакте"
         },
-        total\_space      67645734912,
-        trash\_size       0,
-        used\_space       19942927435,
+        total_space      67645734912,
+        trash_size       0,
+        used_space       19942927435,
         user             {
             login   "login",
             uid     123456
@@ -40,15 +41,17 @@ Example output:
 ## uploadFile(%opt)
 
 Upload file (-file) to Yandex Disk in folder (-remote\_path). Return 1 if success
-    $disk->uploadFile(-file => '/root/upload', -remote\_path => 'Temp', -overwrite => 0);
+
+    $disk->uploadFile(-file => '/root/upload', -remote_path => 'Temp', -overwrite => 0);
     Options:
         -overwrite          => Owervrite file if exists (default: 1)
-        -remote\_path        => Path to upload file on disk
+        -remote_path        => Path to upload file on disk
         -file               => Path to local file
 
 ## createFolder(%opt)
 
 Create folder on disk
+
     $disk->createFolder(-path => 'Temp/test', -recursive => 1);
     Options:
         -path               => Path to folder,
@@ -57,6 +60,7 @@ Create folder on disk
 ## deleteResource(%opt)
 
 Delete file or folder from disk. Return 1 if success
+
     $disk->deleteResource(-path => 'Temp/test');
     Options:
         -path               => Path to delete file or folder
@@ -66,6 +70,7 @@ Delete file or folder from disk. Return 1 if success
 ## downloadFile(%opt)
 
 Download file from Yandex Disk to local file. Method overwrites local file if exists. Return 1 if success
+
     $disk->downloadFile(-path => 'Temp/test', -file => 'test');
     Options:
         -path               => Path to file on Yandex Disk
@@ -74,6 +79,7 @@ Download file from Yandex Disk to local file. Method overwrites local file if ex
 ## emptyTrash(%opt)
 
 Empty trash. If -path specified, delete -path resource, otherwise - empty all trash. Return 1 if success
+
     $disk->emptyTrash(-path => 'Temp/test');        #Delete '/Temp/test' from trash
     Options:
         -path               => Path to resource on Yandex Disk to delete from trash
@@ -96,7 +102,7 @@ my $public = $disk->public();  #Create [Yandex::Disk::Public](https://metacpan.o
 
 # DEPENDENCE
 
-[LWP::UserAgent](https://metacpan.org/pod/JSON::XS|URI::Escape|IO::Socket::SSL)
+[LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent), [JSON::XS](https://metacpan.org/pod/JSON::XS), [URI::Escape](https://metacpan.org/pod/URI::Escape), [IO::Socket::SSL](https://metacpan.org/pod/IO::Socket::SSL)
 
 # AUTHORS
 
