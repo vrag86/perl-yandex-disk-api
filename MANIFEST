@@ -1,0 +1,9 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/00_yandexdisk_api.t
+t/01_yandexdisk_public.t
+t/small_file
+lib/Yandex/Disk.pm
+lib/Yandex/Disk/Public.pm

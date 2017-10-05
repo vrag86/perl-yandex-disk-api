@@ -28,6 +28,7 @@ use File::Spec;
 my $TOKEN = 'AQAAAAAMIzNAAASQpMKd0J_8iUSkr4fIYskC880';
 my $UPLOAD_FILE = File::Spec->catfile($Bin, 'small_file');
 my $DOWNLOAD_FILE = File::Spec->catfile($Bin, "download_file");
+File::Path::Tiny::rm ($DOWNLOAD_FILE);
 
 
 BEGIN {
@@ -50,6 +51,7 @@ testDeleteResource();
 testPublic();
 testEmptyTrash();
 
+File::Path::Tiny::rm ($DOWNLOAD_FILE);
 
 sub testDiskInfo {
     can_ok("Yandex::Disk", "getDiskInfo");
