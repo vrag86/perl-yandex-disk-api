@@ -7,7 +7,6 @@
 
 # SYNOPSYS
 
-    use Data::Printer;
     use Yandex::Disk;
 
     my $TOKEN = 'aaaabbbbccc'; #Auth token. You can get token from module L<Yandex::OAuth>
@@ -48,7 +47,9 @@
 
 Return disk info data as hashref
 
-    $disk->getDiskInfo();
+    my $info = $disk->getDiskInfo();
+
+    $info:
     Example output:
         {
             max_file_size    1073741824,
@@ -134,9 +135,34 @@ List files in folder. Return arrayref to hashref(keys: "path", "type", "name", "
         -limit              => Limit max files to output (default: unlimited)
         -offset             => Offset records from start (default: 0)
 
-# Public files
+## listAllFiles(%opt)
+
+List all files on YandexDisk. Return arrayref to hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime\_type", "size")
+
+    $disk->listAllFiles();
+    Options:
+        -media_type         => Type of file to return. Afaible types listed below. Multiple types can be specified by using a comma. (default: all types) 
+        -limit              => Limit max files to output (default: unlimited)
+        -offset             => Offset records from start (default: 0)
+
+Media types:
+audio, backup, book, compressed, data, development, diskimage, document, encoded, executable, flash, font, image, settings, spreadsheet, text, unknown, video, web
+
+## lastUploadedFiles(%opt)
+
+List last uploaded files. Return arrayref to hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime\_type", "size")
+
+    $disk->lastUploadedFiles();
+    Options:
+        -media_type         => Type of file to return. Afaible types same as listAllFiles. Multiple types can be specified by using a comma. (default: all types) 
+        -limit              => Limit max files to output (default: unlimited)
+
+## Public files
 
 my $public = $disk->public();  #Create [Yandex::Disk::Public](https://metacpan.org/pod/Yandex::Disk::Public) object
+
+# CLI/API
+Sparrow plugin https://sparrowhub.org/info/yandex-disk
 
 # DEPENDENCE
 

@@ -13,7 +13,7 @@ use URI::Escape;
 use Encode;
 use IO::Socket::SSL;
 
-our $VERSION    = '0.02';
+our $VERSION    = '0.03';
 
 my $WAIT_RETRY  = 20;
 my $BUFF_SIZE = 8192;
@@ -204,6 +204,47 @@ sub listFiles {
 
     return $json_res->{_embedded}->{items};
 }
+
+sub listAllFiles {
+    my $self = shift;
+    my %opt = @_;
+    my $limit = $opt{-limit} || 999999;
+    my $media_type = $opt{-media_type};
+    my $offset = $opt{-offset};
+    $offset = 0 if not $offset;
+
+    my $param = "?limit=$limit&offset=$offset";
+    $param .= '&media_type=' . $media_type if $media_type;
+
+    my $res = $self->__request('https://cloud-api.yandex.net/v1/disk/resources/files' . $param, 'GET');
+    my $code = $res->code;
+    if ($code ne '200') {
+        croak "Error on listFiles. Error: " . $res->status_line;
+    }
+    my $json_res = __fromJson($res->decoded_content);
+
+    return $json_res->{items};
+}
+
+sub lastUploadedFiles {
+    my $self = shift;
+    my %opt = @_;
+    my $limit = $opt{-limit} || 999999;
+    my $media_type = $opt{-media_type};
+
+    my $param = "?limit=$limit";
+    $param .= '&media_type=' . $media_type if $media_type;
+
+    my $res = $self->__request('https://cloud-api.yandex.net/v1/disk/resources/last-uploaded' . $param, 'GET');
+    my $code = $res->code;
+    if ($code ne '200') {
+        croak "Error on listFiles. Error: " . $res->status_line;
+    }
+    my $json_res = __fromJson($res->decoded_content);
+
+    return $json_res->{items};
+}
+
 
 sub public {
     my $self = shift;
@@ -459,6 +500,29 @@ List files in folder. Return arrayref to hashref(keys: "path", "type", "name", "
         -path               => Path to resource (file or folder) on Yandex Disk for which need get info
         -limit              => Limit max files to output (default: unlimited)
         -offset             => Offset records from start (default: 0)
+
+=head2 listAllFiles(%opt)
+
+List all files on YandexDisk. Return arrayref to hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime_type", "size")
+    
+    $disk->listAllFiles();
+    Options:
+        -media_type         => Type of file to return. Afaible types listed below. Multiple types can be specified by using a comma. (default: all types) 
+        -limit              => Limit max files to output (default: unlimited)
+        -offset             => Offset records from start (default: 0)
+
+Media types:
+audio, backup, book, compressed, data, development, diskimage, document, encoded, executable, flash, font, image, settings, spreadsheet, text, unknown, video, web
+
+=head2 lastUploadedFiles(%opt)
+
+List last uploaded files. Return arrayref to hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime_type", "size")
+    
+    $disk->lastUploadedFiles();
+    Options:
+        -media_type         => Type of file to return. Afaible types same as listAllFiles. Multiple types can be specified by using a comma. (default: all types) 
+        -limit              => Limit max files to output (default: unlimited)
+
 
 
 =head2 Public files
