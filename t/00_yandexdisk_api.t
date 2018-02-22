@@ -32,7 +32,7 @@ File::Path::Tiny::rm ($DOWNLOAD_FILE);
 
 
 BEGIN {
-    use_ok("Yandex::Disk", "new");
+    use_ok("Yandex::Disk");
 }
 
 can_ok("Yandex::Disk", "new");

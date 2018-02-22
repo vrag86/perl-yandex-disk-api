@@ -293,8 +293,7 @@ sub __upload_file {
 
 
 sub __request {
-    my ($self, $url, $type, $param) = @_;
-    $param = {} if not $param;
+    my ($self, $url, $type) = @_;
 
     my $ua = $self->{ua};
     my $req = HTTP::Request->new($type => $url);
@@ -330,7 +329,6 @@ B<Yandex::Disk> - a simple API for Yandex Disk
 
 =head1 SYNOPSYS
     
-    use Data::Printer;
     use Yandex::Disk;
 
     my $TOKEN = 'aaaabbbbccc'; #Auth token. You can get token from module L<Yandex::OAuth>
@@ -374,7 +372,9 @@ B<Yandex::Disk> - a simple API for Yandex Disk
 
 Return disk info data as hashref
 
-    $disk->getDiskInfo();
+    my $info = $disk->getDiskInfo();
+
+    $info:
     Example output:
         {
             max_file_size    1073741824,
@@ -461,9 +461,12 @@ List files in folder. Return arrayref to hashref(keys: "path", "type", "name", "
         -offset             => Offset records from start (default: 0)
 
 
-=head1 Public files
+=head2 Public files
 
 my $public = $disk->public();  #Create L<Yandex::Disk::Public> object
+
+=head1 CLI/API
+Sparrow plugin https://sparrowhub.org/info/yandex-disk
 
 =head1 DEPENDENCE
 
