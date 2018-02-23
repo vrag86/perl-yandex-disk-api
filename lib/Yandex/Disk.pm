@@ -366,7 +366,8 @@ __END__
 B<Yandex::Disk> - a simple API for Yandex Disk
 
 =head1 VERSION
-    version 0.02
+
+version 0.03
 
 =head1 SYNOPSYS
     
