@@ -27,7 +27,7 @@ use base 'Yandex::Disk';
 
 #Class for Public actions under Yandex Disk files and folders
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub publicFile {
     my $self = shift;
@@ -115,7 +115,7 @@ B<Yandex::Disk::Public> - public and unpublic yandex disk resources(files and fo
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
     use Yandex::Disk;
