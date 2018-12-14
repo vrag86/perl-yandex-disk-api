@@ -46,8 +46,6 @@ isa_ok($disk, "Yandex::Disk");
 testDiskInfo();
 testCreateFolder();
 testUploadFile();
-testUploadFileWithTerm();
-testDownloadFileWithTerm();
 testListFiles();
 testListAllFiles();
 testLastUploadedFiles();
@@ -56,6 +54,8 @@ testCompareFile();
 testDeleteResource();
 testPublic();
 testEmptyTrash();
+#testUploadFileWithTerm();
+#testDownloadFileWithTerm();
 
 File::Path::Tiny::rm ($DOWNLOAD_FILE);
 
@@ -95,7 +95,7 @@ sub testDownloadFile {
                                     -file       => $DOWNLOAD_FILE,
                                 );
     ok (-e $DOWNLOAD_FILE, "Exists download file");
-    ok($res, "Test downloadFile");
+    ok ($res, "Test downloadFile");
 }
 
 sub testDownloadFileWithTerm {
@@ -107,7 +107,7 @@ sub testDownloadFileWithTerm {
                                     -show_progress_bar  => 1,
                                 );
     ok (-e $BIG_DOWNLOAD_FILE, "Exists download file");
-    ok($res, "Test downloadFile with progress bar");
+    ok ($res, "Test downloadFile with progress bar");
 }
 
 sub testCompareFile {
