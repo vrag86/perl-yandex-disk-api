@@ -132,21 +132,21 @@ version 0.06
 =head2 publicFile(%opt)
 
 Make file or folder as public
-    $disk->publicFile ( -path => '/Temp/small_file' ) or die "Cant public file"; #Make file '/Temp/small_file' as public
+    $public->publicFile ( -path => '/Temp/small_file' ) or die "Cant public file"; #Make file '/Temp/small_file' as public
     Options:
         -path               => Path to resource on yandex disk, where need public
 
 =head2 unpublicFile(%opt)
 
 Remove public access to resources
-    $disk->unpublicFile( -path => '/Temp/small_file' ) or die "Cant unpublic file";
+    $public->unpublicFile( -path => '/Temp/small_file' ) or die "Cant unpublic file";
     Options:
         -path               => Path to resource on yandex disk, where need public
 
 =head2 listPublished(%opt)
 
 Return array hashref with published files
-    my $list = $disk->listPublished();
+    my $list = $public->listPublished();
     Options:
         -limit              => Limit max files to output (default: unlimited)
         -offset             => Offset records from start (default: 0)
