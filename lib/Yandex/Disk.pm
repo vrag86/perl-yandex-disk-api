@@ -209,6 +209,22 @@ sub emptyTrash {
     }
 }
 
+sub fileInfo {
+    my $self = shift;
+    my %opt = @_;
+    my $path = $opt{-path} || croak "Specify -path param";
+
+    my $param = '?path=' . uri_escape($path);
+    my $res = $self->__request('https://cloud-api.yandex.net/v1/disk/resources' . $param, 'GET');
+
+    my $code = $res->code;
+    if ($code ne '200') {
+        croak "Error on fileInfo. Error: " . $res->status_line;
+    }
+    my $json_res = __fromJson($res->{_content});
+    return $json_res;
+}
+
 sub listFiles {
     my $self = shift;
     my %opt = @_;
@@ -542,13 +558,21 @@ Empty trash. If -path specified, delete -path resource, otherwise - empty all tr
 
     $disk->emptyTrash;      #Full empty trash
 
+=head2 fileInfo(%opt)
+
+List properties of selected file. Return hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime_type", "size")
+
+    $disk->fileInfo(-path => 'Temp/test');
+    Options:
+        -path               => Path to resource (file) on Yandex Disk for which need get info
+
 =head2 listFiles(%opt)
 
 List files in folder. Return arrayref to hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime_type", "size")
 
     $disk->listFiles(-path => 'Temp/test');
     Options:
-        -path               => Path to resource (file or folder) on Yandex Disk for which need get info
+        -path               => Path to resource (folder) on Yandex Disk for which need get info
         -limit              => Limit max files to output (default: unlimited)
         -offset             => Offset records from start (default: 0)
 

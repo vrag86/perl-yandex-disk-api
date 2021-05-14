@@ -127,11 +127,19 @@ Empty trash. If -path specified, delete -path resource, otherwise - empty all tr
 
 ## listFiles(%opt)
 
+List properties of selected file. Return hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime\_type", "size")
+
+    $disk->listFiles(-path => 'Temp/test');
+    Options:
+        -path               => Path to resource (file) on Yandex Disk for which need get info
+
+## listFiles(%opt)
+
 List files in folder. Return arrayref to hashref(keys: "path", "type", "name", "preview", "created", "modified", "md5", "mime\_type", "size")
 
     $disk->listFiles(-path => 'Temp/test');
     Options:
-        -path               => Path to resource (file or folder) on Yandex Disk for which need get info
+        -path               => Path to resource (folder) on Yandex Disk for which need get info
         -limit              => Limit max files to output (default: unlimited)
         -offset             => Offset records from start (default: 0)
 
